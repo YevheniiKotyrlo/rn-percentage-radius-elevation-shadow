@@ -1,79 +1,14 @@
-# rn-percentage-radius-elevation-shadow
+# Android: a percentage `borderRadius` gives a view's elevation shadow corners multiplied by the screen density
 
 ![Build](https://github.com/YevheniiKotyrlo/rn-percentage-radius-elevation-shadow/workflows/Pre%20Merge%20Checks/badge.svg)
 
-This is your new React Native Reproducer project.
+React Native 0.90.0-nightly-20261112-897cca827, from the [React Native reproducer template](https://github.com/react-native-community/reproducer-react-native). `App.tsx` renders two white 120×120 cards with `elevation: 16`: one with four equal radii, a quarter of its width, and one with uneven radii, its bottom-right radius a tenth of its width. A button switches both cards between the radii in dp (`cardSize / 4`, `cardSize / 10`) and the same radii as percentages (`'25%'`, `'10%'`).
 
-# Reproducer TODO list
+## Steps
 
-- [x] 1. Create a new reproducer project.
-- [ ] 2. Git clone your repository locally.
-- [ ] 3. Edit the project to reproduce the failure you're seeing.
-- [ ] 4. Push your changes, so that Github Actions can run the CI.
-- [ ] 5. Make sure the repository is public and share the link with the issue you reported.
+By hand, on an Android 11 or newer device:
 
-# How to use this Reproducer
+1. Build and install the release APK: `cd ReproducerApp/android && ./gradlew assembleRelease && adb install -r app/build/outputs/apk/release/app-release.apk`.
+2. Open the app and tap the button. The cards keep their shape, but with the radii as percentages their shadows' corners are the radii multiplied by the screen density, up to half the card: on a 3x screen the first card casts a circle's shadow.
 
-This project has been created with `npx @react-native-community/cli init` and is a vanilla React Native app.
-
-> [!IMPORTANT]  
-> Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/set-up-your-environment) so that you have a working environment locally.
-
-## Step 1: Start the Metro Server
-
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-First, make sure you install dependencies with:
-
-```bash
-cd ios && bundle install && bundle exec pod install
-```
-
-Then you can run the iOS app with:
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+Scripted: `./reproduce.sh`, with one Android 11 or newer device attached, builds and installs the app, takes a screenshot with the radii in dp, as percentages and in dp again, and compares the pixels around each card. It exits 1 while a card's shadow differs between the radii in dp and as percentages, 0 once it is the same, and 2 when a step fails or the card's two renders in dp differ. The screenshots land in `screenshots/`.
